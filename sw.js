@@ -2,11 +2,12 @@
 // The app and Leaflet are kept for offline use. Map tiles you have looked at are kept (up to ~2,500), and maps saved with
 // "Save maps for this trip" (NZ Topo50 from LINZ, CC BY 4.0) are kept in their own store until you clear them.
 // A missing or error page is never stored, so a moved or broken web address can't replace the working copy.
-const VERSION = 'nzcamp-2026-11-01b';
+const VERSION = 'nzcamp-2026-11-01c';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js'];
+  'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js',
+  'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js'];
 const TILE_HOSTS = /(^|\.)(tile\.opentopomap\.org|tile\.openstreetmap\.org|server\.arcgisonline\.com|basemaps\.linz\.govt\.nz|data-cdn\.linz\.govt\.nz)$/;
 const KEEP = [VERSION, 'tiles', 'offline-maps'];
 const TILE_MAX = 2500;
@@ -37,7 +38,7 @@ self.addEventListener('fetch', e => {
     return;
   }
   // app files and libraries: saved copy first
-  if (url.origin === location.origin || url.hostname === 'cdnjs.cloudflare.com') {
+  if (url.origin === location.origin || url.hostname === 'cdnjs.cloudflare.com' || url.hostname === 'cdn.jsdelivr.net') {
     e.respondWith(caches.match(req).then(r => r || fetch(req).then(n => { if (n.ok) { const cp = n.clone(); caches.open(VERSION).then(c => c.put(req, cp)); } return n; })));
     return;
   }
