@@ -2,7 +2,7 @@
 // The app and Leaflet are kept for offline use. Map tiles you have looked at are kept (up to ~2,500), and maps saved with
 // "Save maps for this trip" (NZ Topo50 from LINZ, CC BY 4.0) are kept in their own store until you clear them.
 // A missing or error page is never stored, so a moved or broken web address can't replace the working copy.
-const VERSION = 'nzcamp-2026-10-31a';
+const VERSION = 'nzcamp-2026-11-01a';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',
