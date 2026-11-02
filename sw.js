@@ -1,8 +1,8 @@
 // NZ Camp Planner — offline support.
 // The app and Leaflet are kept for offline use. Map tiles you have looked at are kept (up to ~2,500), and maps saved with
-// "Save maps for this trip" (NZ Topo50 from LINZ, CC BY 4.0) are kept in their own store until you clear them.
+// LINZ maps (NZ street map, Topo50, aerial photos — CC BY 4.0) are saved by the app itself in IndexedDB.
 // A missing or error page is never stored, so a moved or broken web address can't replace the working copy.
-const VERSION = 'nzcamp-2026-11-01d';
+const VERSION = 'nzcamp-2026-11-02a';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',
@@ -42,7 +42,12 @@ self.addEventListener('fetch', e => {
     e.respondWith(caches.match(req).then(r => r || fetch(req).then(n => { if (n.ok) { const cp = n.clone(); caches.open(VERSION).then(c => c.put(req, cp)); } return n; })));
     return;
   }
-  // map tiles: saved maps first, then recently viewed, then the network (kept for next time)
+  // LINZ maps are kept by the app itself (IndexedDB); here only Topo50 pieces saved by the older version are answered
+  if (url.hostname === 'basemaps.linz.govt.nz') {
+    if (/\.webp$/.test(url.pathname)) e.respondWith(caches.match(tileKey(req.url), { cacheName: 'offline-maps' }).then(hit => hit || fetch(req)));
+    return;
+  }
+  // other map tiles: recently viewed first, then the network (kept for next time)
   if (TILE_HOSTS.test(url.hostname)) {
     const key = tileKey(req.url);
     e.respondWith(caches.match(key).then(hit => hit || fetch(req.url, { mode: 'cors', credentials: 'omit' })
